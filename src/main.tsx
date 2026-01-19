@@ -12,8 +12,8 @@ import App from './App';
 
 // Компоненты-страницы
 import { HomePage } from './pages/HomePage';
-import { LanguagesListPage } from './pages/LangListPage';
-import { LanguageDetailPage } from './pages/LanguageDetailPage'; // Убедитесь, что имя файла верное
+import { LanguagesListPage } from './pages/LanguageListPage';
+import { LanguageDetailPage } from './pages/LanguageDetailPage'; 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

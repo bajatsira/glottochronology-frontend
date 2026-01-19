@@ -1,5 +1,5 @@
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom'; // Используем Link для навигации
+import { Link } from 'react-router-dom';
 
 export const HomePage = () => {
   return (
@@ -13,11 +13,11 @@ export const HomePage = () => {
       <div className="container-fluid py-5">
         <h1 className="display-5 fw-bold">Добро пожаловать в проект "Глоттохронология"!</h1>
         <p className="col-md-8 fs-4">
-          Это SPA-приложение, разработанное на React и TypeScript, для расчета времени расхождения языков.
+          Это SPA-приложение для расчета времени расхождения языков.
           Перейдите на страницу услуг, чтобы начать.
         </p>
         
-        {/* 3. Оборачиваем кнопку в Link из react-router-dom для SPA-навигации */}
+        {}
         <Link to="/languages">
           <Button variant="primary" size="lg">
             Перейти к услугам

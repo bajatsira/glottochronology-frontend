@@ -1,43 +1,51 @@
-// src/data/mockLanguages.ts
-
-// Описываем структуру одного языка, чтобы TypeScript нам помогал
 export interface ILanguage {
-  id: number;
-  name: string;
-  family: string;
-  subgroup: string;
-  description: string;
-  image_url: string | null; 
-  video_url: string | null; // URL может отсутствовать
-
+  ID: number;      
+  Name: string;     
+  Family: string;  
+  Subgroup: string;   
+  WritingFamily: string;
+  Status: string;        
+  Description: string;   
+  ImageURL: string | null;     
+  VideoURL: string | null;    
+  Lexicon: string[];       
 }
 
 export const mockLanguages: ILanguage[] = [
   {
-    id: 1,
-    name: "Лезгинский",
-    family: "Нахско-дагестанская",
-    subgroup: "Лезгинская",
-    description: "Один из официальных языков Дагестана, распространен в южной части Дагестана.",
-    image_url: "https://upload.wikimedia.org/wikipedia/commons/8/80/Lezgi_people.jpg",
-    video_url: "",
-},
+    ID: 1,
+    Name: "Лезгинский (Mock)",
+    Family: "Нахско-дагестанская",
+    Subgroup: "Лезгинская",
+    WritingFamily: "Кириллица",
+    Status: "активен",
+    Description: "Один из официальных языков Дагестана, распространен в южной части Дагестана.",
+    ImageURL: "https://upload.wikimedia.org/wikipedia/commons/8/80/Lezgi_people.jpg",
+    VideoURL: null, 
+    Lexicon: ["зун", "вун", "ам"],
+  },
   {
-    id: 2,
-    name: "Древнеанглийский",
-    family: "Индоевропейская",
-    subgroup: "Германская",
-    description: "Ранняя форма английского языка, использовавшаяся в Англии и южной Шотландии.",
-    image_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Beowulf.firstpage.jpeg/800px-Beowulf.firstpage.jpeg",
-    video_url: "",
-},
+    ID: 2,
+    Name: "Древнеанглийский (Mock)",
+    Family: "Индоевропейская",
+    Subgroup: "Германская",
+    WritingFamily: "Латиница",
+    Status: "активен",
+    Description: "Ранняя форма английского языка, использовавшаяся в Англии и южной Шотландии.",
+    ImageURL: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Beowulf.firstpage.jpeg/800px-Beowulf.firstpage.jpeg",
+    VideoURL: null,
+    Lexicon: ["ic", "þu", "he"],
+  },
   {
-    id: 3,
-    name: "Язык без картинки",
-    family: "Вымышленная",
-    subgroup: "Тестовая",
-    description: "Этот язык используется для проверки отображения картинки по-умолчанию.",
-    image_url: null, // Специально оставляем пустым
-    video_url: "",  
-},
+    ID: 3,
+    Name: "Язык без картинки (Mock)",
+    Family: "Вымышленная",
+    Subgroup: "Тестовая",
+    WritingFamily: "Нет",
+    Status: "активен",
+    Description: "Этот язык используется для проверки отображения картинки по-умолчанию.",
+    ImageURL: null, 
+    VideoURL: null,
+    Lexicon: [],
+  },
 ];

@@ -1,6 +1,4 @@
-/* src/index.css */
 
-/* Обнуляем стандартные отступы браузера для body */
 body {
   margin: 0;
   padding: 0;
@@ -11,13 +9,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- ДОБАВЬТЕ ЭТОТ БЛОК --- */
-/* Принудительно убираем любые отступы для нашего корневого div */
+
 #root {
   margin: 0;
   padding: 0;
 }
-/* ------------------------- */
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
