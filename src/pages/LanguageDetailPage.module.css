@@ -1,0 +1,34 @@
+/* src/pages/LanguageDetailPage.module.css */
+.portraitContainer {
+  position: relative;
+  width: 100%;
+  max-width: 400px; /* Ширина как у телефона */
+  height: 710px;    /* Высота для портретного соотношения ~16:9 */
+  margin: auto;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.videoBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Видео будет покрывать весь контейнер, обрезая лишнее */
+  z-index: 1;
+}
+
+.overlayContent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  z-index: 2;
+  color: white;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.5), transparent); /* Градиент для лучшей читаемости текста */
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
