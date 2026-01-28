@@ -3,103 +3,101 @@ import React, { useState, useEffect, type FormEvent } from 'react';
 import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
 import { LanguageCard } from '../components/LanguageCard';
 import type { ILanguage } from '../data/mockLanguages';
-import { getLanguages, type IFilterParams } from '../api/languagesApi';
+import { getLanguages } from '../api/languagesApi';
 import { mockLanguages } from '../data/mockLanguages';
+
+import { useSelector, useDispatch } from 'react-redux';
+import {type RootState } from '../store/store';
+import { setFilters } from '../store/filterSlice';
 
 export const LanguagesListPage = () => {
   const [languages, setLanguages] = useState<ILanguage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // --- ИЗМЕНЕНИЯ ЗДЕСЬ: Состояния для ВСЕХ фильтров ---
-  const [filterName, setFilterName] = useState('');
-  const [filterFamily, setFilterFamily] = useState('');
-  const [filterWriting, setFilterWriting] = useState('');
-  
-  // Хранит "примененные" фильтры
-  const [activeFilters, setActiveFilters] = useState<IFilterParams>({});
-  // ----------------------------------------------------
+  // --- REDUX ---
+  const dispatch = useDispatch();
+  // Читаем АКТИВНЫЕ фильтры из глобального стора, а не из локального стейта
+  const activeFilters = useSelector((state: RootState) => state.filters);
 
+  // Локальные состояния для инпутов (чтобы пользователь мог печатать, не отправляя запрос сразу)
+  // Инициализируем их значениями из Redux!
+  const [localName, setLocalName] = useState(activeFilters.name || '');
+  const [localFamily, setLocalFamily] = useState(activeFilters.family || '');
+  const [localWriting, setLocalWriting] = useState(activeFilters.writingFamily || '');
+
+  // 1. Загрузка данных
+  // Этот эффект сработает при первой загрузке И при изменении activeFilters в Redux
   useEffect(() => {
     const fetchLanguages = async () => {
       setIsLoading(true);
+      // Запрашиваем данные с фильтрами из Redux
       const data = await getLanguages(activeFilters, mockLanguages);
       setLanguages(data);
       setIsLoading(false);
     };
 
     fetchLanguages();
-  }, [activeFilters]); 
+  }, [activeFilters]); // Зависимость от Redux-состояния
 
-  // --- ИЗМЕНЕНИЯ ЗДЕСЬ: Собираем все значения в activeFilters ---
+  // 2. Обработчик кнопки "Применить"
   const handleFilterSubmit = (event: FormEvent) => {
     event.preventDefault();
-    setActiveFilters({
-      name: filterName,
-      family: filterFamily,
-      writingFamily: filterWriting,
-    });
+    // Отправляем (диспатчим) новые значения в глобальный Redux-стор
+    dispatch(setFilters({
+      name: localName,
+      family: localFamily,
+      writingFamily: localWriting,
+    }));
   };
-  // -------------------------------------------------------------
 
   if (isLoading) {
-    return (
-      <div className="text-center p-5">
-        <Spinner animation="border" />
-      </div>
-    );
+    return <div className="text-center p-5"><Spinner animation="border" /></div>;
   }
 
   return (
     <>
       <div className="mb-4 p-3 border rounded">
-        <h5>Фильтры</h5>
+        <h5>Фильтры (Redux)</h5>
         <Form onSubmit={handleFilterSubmit}>
           <Row>
-            {/* Поле 1: Название */}
+            {/* Поле Название */}
             <Col md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Название</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Введите..."
-                  value={filterName}
-                  onChange={(e) => setFilterName(e.target.value)}
+                  value={localName}
+                  onChange={(e) => setLocalName(e.target.value)}
                 />
               </Form.Group>
             </Col>
-
-            {/* --- ИЗМЕНЕНИЯ ЗДЕСЬ: Новые поля ввода --- */}
             
-            {/* Поле 2: Семья (выпадающий список для примера) */}
+            {/* Остальные поля аналогично... */}
             <Col md={3}>
-              <Form.Group className="mb-3">
+               <Form.Group className="mb-3">
                 <Form.Label>Семья</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Например: Индоевропейская"
-                  value={filterFamily}
-                  onChange={(e) => setFilterFamily(e.target.value)}
+                  value={localFamily}
+                  onChange={(e) => setLocalFamily(e.target.value)}
                 />
               </Form.Group>
             </Col>
 
-            {/* Поле 3: Письменность */}
-            <Col md={3}>
+             <Col md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Письменность</Form.Label>
                 <Form.Select 
-                  value={filterWriting}
-                  onChange={(e) => setFilterWriting(e.target.value)}
+                  value={localWriting}
+                  onChange={(e) => setLocalWriting(e.target.value)}
                 >
                   <option value="">Любая</option>
-                  <option value="Аджама, латиница, кириллица">Аджама, латиница, кириллица</option>
+                  <option value="Кириллица">Кириллица</option>
                   <option value="Латиница">Латиница</option>
-                  <option value="Арабица">Арабица</option>
+                  <option value="Арабская">Арабская</option>
                 </Form.Select>
               </Form.Group>
             </Col>
-            
-            {/* ------------------------------------------ */}
 
             <Col md={3} className="d-flex align-items-center mb-3">
               <Button variant="primary" type="submit" className="w-100">
@@ -111,17 +109,11 @@ export const LanguagesListPage = () => {
       </div>
 
       <Row xs={1} md={2} lg={3} className="g-4">
-        {languages.length > 0 ? (
-          languages.map(lang => (
-            <Col key={lang.ID}>
-              <LanguageCard language={lang} />
-            </Col>
-          ))
-        ) : (
-          <Col xs={12}>
-            <p className="text-center text-muted">Языки по вашему запросу не найдены.</p>
+        {languages.map(lang => (
+          <Col key={lang.ID}>
+            <LanguageCard language={lang} />
           </Col>
-        )}
+        ))}
       </Row>
     </>
   );
