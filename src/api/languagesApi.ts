@@ -68,3 +68,44 @@ export const getLanguageById = async (id: string): Promise<ILanguage> => {
 
   return response.json();
 };
+
+
+// Интерфейс ответа от сервера
+export interface ICartStatus {
+  count: number;
+  userID: number;
+}
+
+/**
+ * Получает статус корзины.
+ * Если токен есть в localStorage, отправляет его (вернется реальный count).
+ * Если токена нет, отправляет без него (вернется count: 0, userID: -1).
+ */
+export const getCartStatus = async (): Promise<ICartStatus> => {
+  // 1. Пытаемся найти токен (предположим, вы сохраняете его при логине под ключом 'token')
+  const token = localStorage.getItem('token');
+
+  // 2. Формируем заголовки
+  const headers: HeadersInit = {
+    'Content-Type': 'application/json',
+  };
+
+  // Если токен есть, добавляем его
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  // 3. Делаем запрос
+  const response = await fetch(`${API_BASE_URL}/lang-calculation/draft/count`, {
+    method: 'GET',
+    headers: headers,
+  });
+
+  if (!response.ok) {
+    console.error("Ошибка при получении корзины");
+    // Возвращаем дефолтное значение для гостя в случае ошибки сети
+    return { count: 0, userID: -1 };
+  }
+
+  return response.json();
+};

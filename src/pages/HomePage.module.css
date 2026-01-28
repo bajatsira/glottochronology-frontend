@@ -1,0 +1,103 @@
+/* src/pages/HomePage.module.css */
+
+/* Основной контейнер страницы */
+.pageContainer {
+    font-family: 'AeonikPro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #000;
+}
+
+/* Акцентный цвет (используем переменную для удобства) */
+:root {
+    --accent-color: #f26e40;
+}
+
+/* --- Сетка карточек (Grid) --- */
+/* Делаем сетку, где карточки плотно прилегают друг к другу или имеют небольшие отступы */
+.gridContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2px; /* Тонкие разрывы между карточками */
+    margin-top: 20px;
+}
+
+/* --- Карточка статьи (Языка) --- */
+.articleCard {
+    position: relative;
+    /* Квадратные или прямоугольные пропорции */
+    aspect-ratio: 4 / 3; 
+    overflow: hidden;
+    background-color: #f0f0f0;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+    display: block;
+}
+
+/* Картинка на фоне (Ваш CSS из примера) */
+.cardImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    /* Затемнение, как вы просили */
+    filter: brightness(0.75); 
+    transition: filter 0.3s ease;
+}
+
+/* Эффект при наведении: картинка становится ярче */
+.articleCard:hover .cardImage {
+    filter: brightness(1);
+}
+
+/* Контент поверх картинки */
+.cardOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    z-index: 10;
+    color: #fff;
+    /* Легкий градиент снизу, чтобы текст читался даже на светлом фото */
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+}
+
+/* Рубрика (Семья языка) */
+.cardRubric {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #f26e40; /* Акцентный цвет */
+    margin-bottom: 0.5rem;
+    display: block;
+    font-weight: 700;
+}
+
+/* Заголовок (Название языка) */
+.cardTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0;
+    color: #fff;
+}
+
+/* Текст описания (скрываем на маленьких карточках или обрезаем) */
+.cardDescription {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    opacity: 0.9;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Ограничение в 2 строки */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* --- Заголовок секции на главной --- */
+.sectionHeader {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    padding-left: 10px;
+    border-left: 4px solid #f26e40; /* Акцентная линия слева */
+    line-height: 1;
+}

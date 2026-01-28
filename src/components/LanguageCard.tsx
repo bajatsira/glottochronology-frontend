@@ -1,6 +1,6 @@
 import { Card, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import type { ILanguage } from '../data/mockLanguages'; // Импортируем наш обновленный тип
+import type { ILanguage } from '../data/mockLanguages'; 
 import defaultImage from '../assets/default-image.jpg';
 
 interface LanguageCardProps {
