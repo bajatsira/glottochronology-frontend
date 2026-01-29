@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa'; // <-- Импорт плагина
 
 export default defineConfig({
-  //base: '/glottochronology-frontend/',
+  base: '/glottochronology-frontend/',
   plugins: [
     react(),
     // --- НАСТРОЙКА PWA ---
