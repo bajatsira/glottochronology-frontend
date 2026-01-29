@@ -1,5 +1,5 @@
 // src/pages/LanguagesListPage.tsx
-import React, { useState, useEffect, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
 import { LanguageCard } from '../components/LanguageCard';
 import type { ILanguage } from '../data/mockLanguages';

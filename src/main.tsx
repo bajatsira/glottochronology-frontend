@@ -20,7 +20,7 @@ import { LanguageDetailPage } from './pages/LanguageDetailPage';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
         <Provider store={store}> 
-    <BrowserRouter>
+    <BrowserRouter basename="/glottochronology-frontend">
       <Routes>
         <Route path="/" element={<App />}>
           <Route index element={<HomePage />} />
