@@ -61,7 +61,7 @@ export const LanguagesListPage = () => {
         <Form onSubmit={handleFilterSubmit}>
           <Row>
             {/* Поле Название */}
-            <Col md={3}>
+            <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Название</Form.Label>
                 <Form.Control
@@ -73,7 +73,7 @@ export const LanguagesListPage = () => {
             </Col>
             
             {/* Остальные поля аналогично... */}
-            <Col md={3}>
+            <Col xs={12} md={3}>
                <Form.Group className="mb-3">
                 <Form.Label>Семья</Form.Label>
                 <Form.Control
@@ -84,7 +84,7 @@ export const LanguagesListPage = () => {
               </Form.Group>
             </Col>
 
-             <Col md={3}>
+             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Письменность</Form.Label>
                 <Form.Select 
@@ -99,7 +99,7 @@ export const LanguagesListPage = () => {
               </Form.Group>
             </Col>
 
-            <Col md={3} className="d-flex align-items-center mb-3">
+            <Col xs={12} md={3} className="d-flex align-items-center mb-3">
               <Button variant="primary" type="submit" className="w-100">
                 Применить
               </Button>

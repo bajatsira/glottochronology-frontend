@@ -2,12 +2,13 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa'; // <-- Импорт плагина
+import basicSsl from '@vitejs/plugin-basic-ssl';
 
 export default defineConfig({
   base: '/glottochronology-frontend/',
   plugins: [
     react(),
-    // --- НАСТРОЙКА PWA ---
+    basicSsl(),
     VitePWA({
       registerType: 'autoUpdate', // Автоматическое обновление сервис-воркера
       devOptions: {
@@ -36,9 +37,12 @@ export default defineConfig({
     })
   ],
   server: {
+    host: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8082',
+        //target: 'http://localhost:8082',
+        //target: 'http://192.168.3.39:8082',
+        target: 'http://10.111.255.45:8082',
         changeOrigin: true,
       },
     },

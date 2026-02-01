@@ -101,3 +101,12 @@
     border-left: 4px solid #f26e40; /* Акцентная линия слева */
     line-height: 1;
 }
+
+@media (max-width: 576px) {
+    .sectionHeader {
+        font-size: 1.8rem; /* Уменьшаем шрифт заголовка на телефоне */
+    }
+    .cardTitle {
+        font-size: 1.2rem; /* Уменьшаем шрифт в карточках */
+    }
+}

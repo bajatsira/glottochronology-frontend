@@ -2,14 +2,30 @@
 .portraitContainer {
   position: relative;
   width: 100%;
-  max-width: 400px; /* Ширина как у телефона */
-  height: 710px;    /* Высота для портретного соотношения ~16:9 */
+  
+  /* На мобильных (ширина < 768px): растягиваем на весь экран */
+  max-width: 100%;
+  height: 100vh; /* Высота во весь экран */
+  border-radius: 0; /* Убираем скругления на телефоне */
+  
   margin: auto;
-  border-radius: 20px;
   overflow: hidden;
   background-color: #000;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  box-shadow: none; /* Убираем тень на телефоне */
 }
+
+
+@media (min-width: 768px) {
+  .portraitContainer {
+    max-width: 400px;
+    height: 710px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}
+
 
 .videoBackground {
   position: absolute;

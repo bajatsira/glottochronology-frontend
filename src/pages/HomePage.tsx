@@ -13,7 +13,7 @@ export const HomePage = () => {
           О проекте
           <br />
           <span style={{ fontSize: '1rem', fontWeight: 400, color: '#666', marginLeft: '0' }}>
-            Лабораторная работа №5 • React SPA
+            React SPA
           </span>
         </h1>
 
