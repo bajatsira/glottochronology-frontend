@@ -7,6 +7,7 @@ import { store } from './store/store';
 import { HashRouter } from 'react-router-dom'
 
 
+
 // Стили
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
@@ -18,6 +19,10 @@ import App from './App';
 import { HomePage } from './pages/HomePage';
 import { LanguagesListPage } from './pages/LanguageListPage';
 import { LanguageDetailPage } from './pages/LanguageDetailPage'; 
+import { LoginPage } from './pages/LoginPage';
+import { RegisterPage } from './pages/RegisterPage';
+import { LangCalculationListPage } from './pages/LangCalculationListPage';
+import { LangCalculationDetailPage } from './pages/LangCalculationDetailPage';
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -25,11 +30,18 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Provider store={store}> 
     <HashRouter>
       <Routes>
-        <Route path="/" element={<App />}>
-          <Route index element={<HomePage />} />
-          <Route path="languages" element={<LanguagesListPage />} />
-          <Route path="languages/:id" element={<LanguageDetailPage />} />
-        </Route>
+  <Route path="/" element={<App />}>
+    <Route index element={<HomePage />} />
+    <Route path="login" element={<LoginPage />} />
+    <Route path="register" element={<RegisterPage />} />
+    
+    <Route path="languages" element={<LanguagesListPage />} />
+    <Route path="languages/:id" element={<LanguageDetailPage />} />
+
+
+    <Route path="requests" element={<LangCalculationListPage />} />
+    <Route path="requests/:id" element={<LangCalculationDetailPage />} />
+  </Route>
       </Routes>
     </HashRouter>
         </Provider>

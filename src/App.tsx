@@ -1,35 +1,32 @@
 // src/App.tsx
-import { useState, useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router-dom'; // Добавили useLocation
+import { useEffect } from 'react';
+import { Outlet, useLocation, Link } from 'react-router-dom'; // Убедитесь, что Link импортирован
 import { Container, Badge, Button, Spinner } from 'react-bootstrap';
 import { NavbarComponent } from './components/NavbarComponent';
 import { BreadcrumbsComponent } from './components/BreadcrumbsComponent';
-import { getCartStatus } from './api/languagesApi';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState, AppDispatch } from './store/store';
+import { fetchLangCalculations } from './store/langCalculationsSlice';
 
 function App() {
-  const [cartCount, setCartCount] = useState(0);
-  const [isCartLoading, setIsCartLoading] = useState(false);
-  
-  // Получаем текущий путь
+  const dispatch = useDispatch<AppDispatch>();
   const location = useLocation();
-  // Проверяем, главная ли это страница
   const isHomePage = location.pathname === '/';
 
-  const refreshCart = async () => {
-    setIsCartLoading(true);
-    try {
-      const data = await getCartStatus();
-      setCartCount(data.count);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setIsCartLoading(false);
-    }
-  };
+  const { user } = useSelector((state: RootState) => state.auth);
+  const { draft, status } = useSelector((state: RootState) => state.langCalculations);
 
   useEffect(() => {
-    refreshCart();
-  }, []);
+    if (user) {
+      dispatch(fetchLangCalculations());
+    }
+  }, [user, dispatch]);
+
+  const cartCount = draft?.languages?.length || 0;
+  const isCartLoading = status === 'loading';
+  
+  // Определяем, активна ли ссылка. Она неактивна, если черновика нет.
+  const isCartDisabled = !draft;
 
   return (
     <>
@@ -37,29 +34,44 @@ function App() {
 
       <Container className="mt-4">
         
-        {/* --- УСЛОВИЕ: Показываем корзину ТОЛЬКО если это НЕ главная страница --- */}
-        {!isHomePage && (
+        {!isHomePage && user && (
           <div className="d-flex justify-content-end mb-3">
-            <Button 
-              variant="outline-dark" // Стиль под N+1
-              onClick={refreshCart}
-              disabled={isCartLoading}
-              title="Обновить статус"
-              style={{ borderRadius: 0 }} // Квадратная кнопка как в N+1
+            {}
+
+            {/* 1. Оборачиваем кнопку в Link */}
+            <Link
+              to={draft ? `/requests/${draft.id}` : '#'}
+              // 2. Добавляем стиль, чтобы убрать синее подчеркивание у ссылки
+              style={{ textDecoration: 'none' }}
+              // 3. Добавляем CSS-класс, чтобы сделать ссылку некликабельной, если она должна быть disabled
+              className={isCartDisabled ? 'disabled-link' : ''}
+              // Для доступности
+              aria-disabled={isCartDisabled}
+              tabIndex={isCartDisabled ? -1 : undefined}
             >
-              {isCartLoading ? (
-                <Spinner as="span" animation="border" size="sm" className="me-2" />
-              ) : (
-                <span className="me-2">Корзина</span>
-              )}
-              <Badge bg="dark">{cartCount}</Badge>
-            </Button>
+              {/* 4. Из Button убираем 'as' и 'to' */}
+              <Button
+                variant={draft ? "dark" : "outline-dark"}
+                disabled={isCartDisabled && !isCartLoading} // Кнопка визуально серая, если нужно
+                style={{ borderRadius: 0, minWidth: '120px' }}
+              >
+                {isCartLoading ? (
+                  <Spinner as="span" animation="border" size="sm" />
+                ) : (
+                  <>
+                    <span className="me-2">🛒</span>
+                    Черновик <Badge bg="secondary">{cartCount}</Badge>
+                  </>
+                )}
+              </Button>
+            </Link>
+
+            {/* ------------------------- */}
           </div>
         )}
-        {/* ----------------------------------------------------------------------- */}
 
         <BreadcrumbsComponent />
-        <hr className={isHomePage ? "d-none" : ""} /> {/* Скрываем линию на главной */}
+        <hr className={isHomePage ? "d-none" : ""} />
         
         <Outlet />
       </Container>
@@ -68,3 +80,4 @@ function App() {
 }
 
 export default App;
+

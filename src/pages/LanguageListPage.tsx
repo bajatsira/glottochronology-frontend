@@ -1,83 +1,79 @@
-// src/pages/LanguagesListPage.tsx
 import { useState, useEffect, type FormEvent } from 'react';
-import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
+import { Row, Col, Form, Button, Spinner, Alert } from 'react-bootstrap';
 import { LanguageCard } from '../components/LanguageCard';
-import type { ILanguage } from '../data/mockLanguages';
-import { getLanguages } from '../api/languagesApi';
-import { mockLanguages } from '../data/mockLanguages';
-
 import { useSelector, useDispatch } from 'react-redux';
-import {type RootState } from '../store/store';
-import { setFilters } from '../store/filterSlice';
+import type { RootState, AppDispatch } from '../store/store';
+import { setLanguageFilters, fetchLanguages } from '../store/languagesSlice';
+import { addLangToDraft } from '../store/langCalculationsSlice';
 
 export const LanguagesListPage = () => {
-  const [languages, setLanguages] = useState<ILanguage[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const dispatch = useDispatch<AppDispatch>();
 
-  // --- REDUX ---
-  const dispatch = useDispatch();
-  // Читаем АКТИВНЫЕ фильтры из глобального стора, а не из локального стейта
-  const activeFilters = useSelector((state: RootState) => state.filters);
+  // --- Данные из Redux (Languages - вручную написанный слайс) ---
+  const { items: languages, status, error, filters } = useSelector((state: RootState) => state.languages);
+  
+  // --- Данные пользователя (для отображения кнопки) ---
+  const { user } = useSelector((state: RootState) => state.auth);
 
-  // Локальные состояния для инпутов (чтобы пользователь мог печатать, не отправляя запрос сразу)
-  // Инициализируем их значениями из Redux!
-  const [localName, setLocalName] = useState(activeFilters.name || '');
-  const [localFamily, setLocalFamily] = useState(activeFilters.family || '');
-  const [localWriting, setLocalWriting] = useState(activeFilters.writingFamily || '');
+  // --- Локальное состояние фильтров ---
+  const [localName, setLocalName] = useState(filters.name || '');
+  const [localFamily, setLocalFamily] = useState(filters.family || '');
+  const [localWriting, setLocalWriting] = useState(filters.writingFamily || '');
 
-  // 1. Загрузка данных
-  // Этот эффект сработает при первой загрузке И при изменении activeFilters в Redux
+  // 1. Загрузка данных при изменении фильтров в Redux
   useEffect(() => {
-    const fetchLanguages = async () => {
-      setIsLoading(true);
-      // Запрашиваем данные с фильтрами из Redux
-      const data = await getLanguages(activeFilters, mockLanguages);
-      setLanguages(data);
-      setIsLoading(false);
-    };
+    dispatch(fetchLanguages(filters));
+  }, [dispatch, filters]);
 
-    fetchLanguages();
-  }, [activeFilters]); // Зависимость от Redux-состояния
-
-  // 2. Обработчик кнопки "Применить"
+  // 2. Применение фильтров
   const handleFilterSubmit = (event: FormEvent) => {
     event.preventDefault();
-    // Отправляем (диспатчим) новые значения в глобальный Redux-стор
-    dispatch(setFilters({
+    dispatch(setLanguageFilters({
       name: localName,
       family: localFamily,
       writingFamily: localWriting,
     }));
   };
 
-  if (isLoading) {
+  // 3. Добавление в заявку (Кодогенерация + Thunk)
+  // Бэкенд: POST /api/lang-calculation/{LanguageID}/langs
+  // Мы передаем draftId: 0, так как бэкенд сам находит черновик юзера.
+  const handleAddToDraft = (langId: number) => {
+    dispatch(addLangToDraft({ draftId: 0, langId }));
+  };
+
+  if (status === 'loading' && languages.length === 0) {
     return <div className="text-center p-5"><Spinner animation="border" /></div>;
+  }
+
+  if (status === 'failed') {
+      return <Alert variant="danger">Ошибка: {error}</Alert>;
   }
 
   return (
     <>
-      <div className="mb-4 p-3 border rounded">
-        <h5>Фильтры (Redux)</h5>
+      <div className="mb-4 p-3 border rounded bg-light">
+        <h5>Поиск языков</h5>
         <Form onSubmit={handleFilterSubmit}>
           <Row>
-            {/* Поле Название */}
             <Col xs={12} md={3}>
               <Form.Group className="mb-3">
                 <Form.Label>Название</Form.Label>
                 <Form.Control
                   type="text"
+                  placeholder="Например, Лезгинский"
                   value={localName}
                   onChange={(e) => setLocalName(e.target.value)}
                 />
               </Form.Group>
             </Col>
             
-            {/* Остальные поля аналогично... */}
             <Col xs={12} md={3}>
                <Form.Group className="mb-3">
                 <Form.Label>Семья</Form.Label>
                 <Form.Control
                   type="text"
+                   placeholder="Например, Нахско-дагестанская"
                   value={localFamily}
                   onChange={(e) => setLocalFamily(e.target.value)}
                 />
@@ -100,7 +96,7 @@ export const LanguagesListPage = () => {
             </Col>
 
             <Col xs={12} md={3} className="d-flex align-items-center mb-3">
-              <Button variant="primary" type="submit" className="w-100">
+              <Button variant="primary" type="submit" className="w-100 mt-4">
                 Применить
               </Button>
             </Col>
@@ -108,10 +104,23 @@ export const LanguagesListPage = () => {
         </Form>
       </div>
 
+      {languages.length === 0 && status === 'succeeded' && (
+          <Alert variant="info">Языки не найдены. Попробуйте изменить фильтры.</Alert>
+      )}
+
       <Row xs={1} md={2} lg={3} className="g-4">
         {languages.map(lang => (
           <Col key={lang.ID}>
             <LanguageCard language={lang} />
+            {user && (
+                <Button 
+                    variant="success" 
+                    className="mt-2 w-100"
+                    onClick={() => handleAddToDraft(lang.ID)}
+                >
+                    Добавить в заявку
+                </Button>
+            )}
           </Col>
         ))}
       </Row>
