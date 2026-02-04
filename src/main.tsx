@@ -1,9 +1,11 @@
 // src/main.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route} from 'react-router-dom';
 import { Provider } from 'react-redux'; 
-import { store } from './store/store';  
+import { store } from './store/store'; 
+import { HashRouter } from 'react-router-dom'
+
 
 // Стили
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,10 +19,11 @@ import { HomePage } from './pages/HomePage';
 import { LanguagesListPage } from './pages/LanguageListPage';
 import { LanguageDetailPage } from './pages/LanguageDetailPage'; 
 
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
         <Provider store={store}> 
-    <BrowserRouter basename="/glottochronology-frontend">
+    <HashRouter>
       <Routes>
         <Route path="/" element={<App />}>
           <Route index element={<HomePage />} />
@@ -28,7 +31,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="languages/:id" element={<LanguageDetailPage />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
         </Provider>
 
   </React.StrictMode>

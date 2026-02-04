@@ -1,7 +1,17 @@
 // src/api/languagesApi.ts
 import type { ILanguage } from '../data/mockLanguages';
 
-const API_BASE_URL = '/api';
+//const API_BASE_URL = '/api';
+
+// Определяем базовый URL сервера
+// import.meta.env.DEV возвращает true, если запущен "npm run dev"
+const SERVER_URL = import.meta.env.DEV 
+  ? ''                      // В dev-режиме используем прокси (пустая строка + /api)
+  : 'http://localhost:8082'; // В prod-режиме (Tauri) стучимся напрямую на бэкенд
+
+const API_BASE_URL = `${SERVER_URL}/api`;
+
+
 
 // --- ИЗМЕНЕНИЯ ЗДЕСЬ: Добавляем новые поля в интерфейс ---
 export interface IFilterParams {

@@ -5,7 +5,8 @@ import { VitePWA } from 'vite-plugin-pwa'; // <-- Импорт плагина
 import basicSsl from '@vitejs/plugin-basic-ssl';
 
 export default defineConfig({
-  base: '/glottochronology-frontend/',
+  //base: '/glottochronology-frontend/',
+  base: './',
   plugins: [
     react(),
     basicSsl(),
