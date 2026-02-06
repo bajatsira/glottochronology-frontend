@@ -6,6 +6,8 @@ import styles from './LanguageDetailPage.module.css';
 import type { ILanguage } from '../data/mockLanguages';
 import { getLanguageById } from '../api/languagesApi'; // <-- Импортируем нашу новую функцию
 
+
+
 export const LanguageDetailPage = () => {
   // useParams() достает id из URL (например, '123' из '/languages/123')
   const { id } = useParams<{ id: string }>();
@@ -63,10 +65,10 @@ export const LanguageDetailPage = () => {
   return (
     <div className={styles.portraitContainer}>
       {/* Показываем видео, только если для него есть URL */}
-      {language.VideoURL && (
+      {language.videoURL && (
         <video
           className={styles.videoBackground}
-          src={language.VideoURL}
+          src={language.videoURL}
           autoPlay
           loop
           muted
@@ -75,10 +77,10 @@ export const LanguageDetailPage = () => {
       )}
       
       <div className={styles.overlayContent}>
-        <h2>{language.Name}</h2>
-        <p><strong>Семья:</strong> {language.Family}</p>
-        <p><strong>Подгруппа:</strong> {language.Subgroup}</p>
-        <p>{language.Description}</p>
+        <h2>{language.name}</h2>
+        <p><strong>Семья:</strong> {language.family}</p>
+        <p><strong>Подгруппа:</strong> {language.subgroup}</p>
+        <p>{language.description}</p>
       </div>
     </div>
   );

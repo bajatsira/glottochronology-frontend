@@ -28,7 +28,7 @@ export const NavbarComponent = () => {
             <Nav.Link as={Link} to="/" style={{ color: '#000' }}>Главная</Nav.Link>
             <Nav.Link as={Link} to="/languages" style={{ color: '#000' }}>Языки</Nav.Link>
             {user && (
-              <Nav.Link as={Link} to="/LangCalculation" style={{ color: '#000' }}>Расчеты Сводеша</Nav.Link>
+              <Nav.Link as={Link} to="/LangCalculation" style={{ color: '#000' }}>Расчеты дивергенции</Nav.Link>
             )}
           </Nav>
           <Nav>

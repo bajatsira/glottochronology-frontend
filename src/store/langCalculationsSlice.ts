@@ -1,8 +1,19 @@
-// src/store/langCalculationsSlice.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { generatedApi } from '../api/generatedClient';
 import type { DsLangCalculation } from '../api/generated-api';
 import { logout } from './authSlice';
+import axios from 'axios'; 
+
+// --- Хелпер для получения URL (для ручных запросов axios) ---
+const getBaseUrl = () => {
+  const ZEROTIER_IP = "10.111.255.45";
+  const PORT = "8082";
+  // @ts-ignore
+  const isTauri = !!window.__TAURI_INTERNALS__;
+  return isTauri 
+    ? `http://${ZEROTIER_IP}:${PORT}/api` 
+    : '/api';
+};
 
 // 1. Получить список всех заявок
 export const fetchLangCalculations = createAsyncThunk<DsLangCalculation[]>(
@@ -30,17 +41,12 @@ export const fetchLangCalculationById = createAsyncThunk<DsLangCalculation, numb
   }
 );
 
-// 3. Добавить язык в черновик (М-М)
-// ИСПРАВЛЕНО: Бэкенд ожидает ID языка в URL (POST /api/lang-calculation/{LanguageID}/langs)
+// 3. Добавить язык в черновик
 export const addLangToDraft = createAsyncThunk<void, { draftId: number, langId: number }>(
     'langCalculations/addLangToDraft',
     async ({ langId }, { rejectWithValue, dispatch }) => {
         try {
-            // Передаем langId как первый аргумент, он попадет в URL: .../{langId}/langs
-            // Второй аргумент (params) оставляем пустым или не передаем вовсе.
             await generatedApi.api.langCalculationLangsCreate(langId);
-            
-            // Обновляем список, чтобы пересчитать счетчик корзины
             dispatch(fetchLangCalculations()); 
         } catch (err: any) {
             return rejectWithValue(err.response?.data);
@@ -48,17 +54,14 @@ export const addLangToDraft = createAsyncThunk<void, { draftId: number, langId: 
     }
 );
 
-// 4. Удалить язык из заявки (М-М)
-// Бэкенд: DELETE /api/lang-calculation/{DraftID}/langs?language_id={LanguageID}
+// 4. Удалить язык из заявки
 export const removeLangFromDraft = createAsyncThunk<void, { draftId: number, langId: number }>(
     'langCalculations/removeLang',
     async ({ draftId, langId }, { rejectWithValue, dispatch }) => {
         try {
-            // generated-api принимает (id, query, params)
             await generatedApi.api.langCalculationLangsDelete(draftId, { language_id: langId });
-            
-            dispatch(fetchLangCalculationById(draftId)); // Обновляем текущую заявку
-            dispatch(fetchLangCalculations()); // Обновляем счетчик
+            dispatch(fetchLangCalculationById(draftId)); 
+            dispatch(fetchLangCalculations()); 
         } catch (err: any) {
             return rejectWithValue(err.response?.data);
         }
@@ -91,6 +94,35 @@ export const deleteCalculation = createAsyncThunk<void, number>(
     }
 );
 
+// 7. Установить базовый язык (Использует Axios + getBaseUrl)
+export const setBaseLanguage = createAsyncThunk(
+  'langCalculations/setBaseLanguage',
+  async ({ calculationId, languageId }: { calculationId: number; languageId: number }, { rejectWithValue }) => {
+    try {
+      const baseURL = getBaseUrl();
+      // baseURL уже содержит '/api', добавляем остальной путь
+      const url = `${baseURL}/lang-calculation/${calculationId}/base/${languageId}`;
+      
+      console.log("Sending PUT request to:", url);
+
+      await axios.put(
+        url,
+        {}, 
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      
+      return { calculationId, languageId };
+    } catch (error: any) {
+      console.error("Set Base Language Error:", error);
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);
+
 interface LangCalculationsState {
   items: DsLangCalculation[];
   draft: DsLangCalculation | null;
@@ -113,6 +145,7 @@ export const langCalculationsSlice = createSlice({
   reducers: {
       clearCurrentDetail: (state) => {
           state.currentDetail = null;
+          state.status = 'idle';
       }
   },
   extraReducers: (builder) => {
@@ -124,26 +157,63 @@ export const langCalculationsSlice = createSlice({
         state.status = 'idle';
     });
 
+    // --- ОБРАБОТКА setBaseLanguage (БЕЗ GLOBAL LOADING) ---
+    builder.addCase(setBaseLanguage.fulfilled, (state, action) => {
+        const { calculationId, languageId } = action.payload;
+
+        // Хелпер для обновления флагов внутри массива языков
+        const updateLanguagesFlags = (languages: any[]) => {
+             languages.forEach(l => {
+                 // isBase = true только для выбранного языка, остальным false
+                 // Приводим к Number для надежности сравнения
+                 l.isBase = (Number(l.language.id) === Number(languageId));
+             });
+        };
+
+        // 1. Обновляем в общем списке items
+        const listCalc = state.items.find(c => c.id === calculationId);
+        if (listCalc) {
+            listCalc.baseLanguageID = languageId;
+            if (listCalc.languages) updateLanguagesFlags(listCalc.languages);
+        }
+
+        // 2. Обновляем в currentDetail (ОБЯЗАТЕЛЬНО для отображения галочки на странице)
+        if (state.currentDetail && state.currentDetail.id === calculationId) {
+            state.currentDetail.baseLanguageID = languageId;
+            if (state.currentDetail.languages) updateLanguagesFlags(state.currentDetail.languages);
+        }
+
+        // 3. Обновляем в черновике (если он есть отдельно)
+        if (state.draft && state.draft.id === calculationId) {
+            state.draft.baseLanguageID = languageId;
+            if (state.draft.languages) updateLanguagesFlags(state.draft.languages);
+        }
+    });
+
+    // --- СТАНДАРТНЫЕ FETCH ЗАПРОСЫ ---
+
     builder
-      // Fetch All
       .addCase(fetchLangCalculations.fulfilled, (state, action) => {
         state.status = 'succeeded';
         state.items = action.payload;
-        // Ищем заявку со статусом 'черновик'
         state.draft = action.payload.find(req => req.status === 'черновик') || null;
       })
-      // Fetch Detail
-      .addCase(fetchLangCalculationById.pending, (state) => { state.status = 'loading'; })
       .addCase(fetchLangCalculationById.fulfilled, (state, action) => {
           state.status = 'succeeded';
           state.currentDetail = action.payload;
-      })
-      // Обработка статусов загрузки и ошибок для всех thunk-ов
-      .addMatcher(
-          (action) => action.type.endsWith('/pending'),
+      });
+
+      // --- ГЛОБАЛЬНЫЙ МАТЧЕР СТАТУСОВ ---
+      
+      // 1. LOADING
+      // ВАЖНО: Исключаем 'setBaseLanguage', чтобы не вешать спиннер на всю страницу при клике на галочку
+      builder.addMatcher(
+          (action) => action.type.endsWith('/pending') && !action.type.includes('setBaseLanguage'),
           (state) => { state.status = 'loading'; state.error = null; }
-      )
-      .addMatcher(
+      );
+
+      // 2. FAILED
+      builder.addMatcher(
         (action) => action.type.endsWith('/rejected'),
         (state, action: any) => { state.status = 'failed'; state.error = action.payload; }
       );

@@ -39,8 +39,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Route path="languages/:id" element={<LanguageDetailPage />} />
 
 
-    <Route path="requests" element={<LangCalculationListPage />} />
-    <Route path="requests/:id" element={<LangCalculationDetailPage />} />
+    <Route path="LangCalculation" element={<LangCalculationListPage />} />
+    <Route path="LangCalculation/:id" element={<LangCalculationDetailPage />} />
   </Route>
       </Routes>
     </HashRouter>

@@ -82,8 +82,8 @@ export const LangCalculationListPage = () => {
                 </td>
                 <td>{calc.languages?.length || 0}</td>
                 <td>
-                  {/* Ссылка "по теме": /lang-calculations/:id */}
-                  <Link to={`/lang-calculations/${calc.id}`}>
+                  {/* Ссылка "по теме": /LangCalculation/:id */}
+                  <Link to={`/LangCalculation/${calc.id}`}>
                     <Button variant="info" size="sm" className="me-2 text-white">
                       Подробнее
                     </Button>

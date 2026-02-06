@@ -40,7 +40,7 @@ function App() {
 
             {/* 1. Оборачиваем кнопку в Link */}
             <Link
-              to={draft ? `/requests/${draft.id}` : '#'}
+              to={draft ? `/LangCalculation/${draft.id}` : '#'}
               // 2. Добавляем стиль, чтобы убрать синее подчеркивание у ссылки
               style={{ textDecoration: 'none' }}
               // 3. Добавляем CSS-класс, чтобы сделать ссылку некликабельной, если она должна быть disabled

@@ -1,8 +1,20 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
-// Импортируем гибридную функцию, а не прямой axios instance
-import { getLanguages, type IFilterParams } from '../api/languagesApi';
+import axios from 'axios'; // Используем axios напрямую
+import type { IFilterParams } from '../api/languagesApi'; // Импортируем только интерфейс
 import { mockLanguages, type ILanguage } from '../data/mockLanguages';
 import { logout } from './authSlice';
+
+// --- Хелпер для получения URL (тот же, что и в langCalculationsSlice) ---
+const getBaseUrl = () => {
+  const ZEROTIER_IP = "10.111.255.45";
+  const PORT = "8082";
+  // @ts-ignore
+  const isTauri = !!window.__TAURI_INTERNALS__;
+  
+  return isTauri 
+    ? `http://${ZEROTIER_IP}:${PORT}/api` 
+    : '/api';
+};
 
 export const fetchLanguages = createAsyncThunk<
   ILanguage[],      
@@ -12,10 +24,23 @@ export const fetchLanguages = createAsyncThunk<
   'languages/fetchLanguages', 
   async (filters, { rejectWithValue }) => {
     try {
-      // Используем функцию, которая сама решит, как делать запрос (Tauri fetch или Axios)
-      const data = await getLanguages(filters, mockLanguages);
+      const baseURL = getBaseUrl();
       
-      // Защита: если API вернул что-то странное (не массив), возвращаем моки, чтобы не сломать .map()
+      // Формируем параметры запроса
+      const params = new URLSearchParams();
+      if (filters.name) params.append('name', filters.name);
+      if (filters.family) params.append('family', filters.family);
+      if (filters.writingFamily) params.append('writingFamily', filters.writingFamily);
+
+      const url = `${baseURL}/langs?${params.toString()}`;
+      
+      console.log("[fetchLanguages] Requesting:", url);
+
+      // Делаем запрос
+      const response = await axios.get<ILanguage[]>(url);
+      const data = response.data;
+      
+      // Защита: если API вернул что-то странное
       if (!Array.isArray(data)) {
           console.warn("API returned non-array data:", data);
           return mockLanguages;
@@ -23,6 +48,10 @@ export const fetchLanguages = createAsyncThunk<
 
       return data;
     } catch (err: any) {
+      console.error("[fetchLanguages] Error:", err);
+      // Если запрос упал, возвращаем ошибку, чтобы UI знал об этом.
+      // (Можно раскомментировать строку ниже, если хотите показывать моки при ошибке сети)
+      // return mockLanguages; 
       return rejectWithValue(err.message || 'Failed to fetch languages');
     }
   }
@@ -62,10 +91,10 @@ export const languagesSlice = createSlice({
         state.filters = { name: '', family: '', writingFamily: '' };
         state.items = [];
     });
-
     builder
       .addCase(fetchLanguages.pending, (state) => {
         state.status = 'loading';
+        state.error = null;
       })
       .addCase(fetchLanguages.fulfilled, (state, action: PayloadAction<ILanguage[]>) => {
         state.status = 'succeeded';
@@ -74,11 +103,11 @@ export const languagesSlice = createSlice({
       .addCase(fetchLanguages.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload ?? 'Unknown error';
-        // При ошибке можно загружать моки, чтобы не показывать пустоту
-        state.items = mockLanguages; 
+        // state.items = mockLanguages; 
       });
   },
 });
 
 export const { setLanguageFilters, resetLanguageFilters } = languagesSlice.actions;
+
 export default languagesSlice.reducer;

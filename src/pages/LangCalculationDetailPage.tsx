@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Container, Table, Button, Spinner, Alert, Badge, Card, Row, Col } from 'react-bootstrap';
+import { Container, Table, Button, Spinner, Alert, Badge, Card, Row, Col, Form } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { 
   fetchLangCalculationById, 
   removeLangFromDraft, 
   confirmCalculation, 
-  clearCurrentDetail 
+  clearCurrentDetail,
+  setBaseLanguage 
 } from '../store/langCalculationsSlice';
 import type { RootState, AppDispatch } from '../store/store';
 
@@ -30,8 +31,16 @@ export const LangCalculationDetailPage = () => {
   const handleRemoveLang = (langId: number) => {
     if (currentDetail?.id) {
         if (confirm('Удалить этот язык из расчета?')) {
+            // Обратите внимание: проверьте, ожидает ли ваш thunk 'draftId' или 'calculationId'.
+            // В вашем коде было draftId, оставляю как есть.
             dispatch(removeLangFromDraft({ draftId: currentDetail.id, langId }));
         }
+    }
+  };
+
+  const handleSetBase = (langId: number) => {
+    if (currentDetail?.id) {
+        dispatch(setBaseLanguage({ calculationId: currentDetail.id, languageId: langId }));
     }
   };
 
@@ -39,7 +48,7 @@ export const LangCalculationDetailPage = () => {
     if (currentDetail?.id) {
        if (confirm('Вы уверены, что хотите отправить заявку на расчет? Редактирование станет недоступным.')) {
            await dispatch(confirmCalculation(currentDetail.id));
-           navigate('/lang-calculations'); // Возврат к списку
+           navigate('/LangCalculation'); // Возврат к списку
        }
     }
   };
@@ -63,7 +72,7 @@ export const LangCalculationDetailPage = () => {
     <Container className="mt-4">
       {/* Хедер с навигацией назад */}
       <div className="mb-3">
-          <Link to="/lang-calculations" className="text-decoration-none">&larr; Вернуться к списку</Link>
+          <Link to="/LangCalculation" className="text-decoration-none">&larr; Вернуться к списку</Link>
       </div>
 
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -102,12 +111,12 @@ export const LangCalculationDetailPage = () => {
       )}
 
       <h4>Выбранные языки</h4>
-      <Table bordered hover>
+      <Table bordered hover className="align-middle">
         <thead className="table-light">
           <tr>
             <th>Название</th>
             <th>Семья</th>
-            <th>Роль</th>
+            <th>Роль (Базовый)</th>
             {isDraft && <th style={{ width: '150px' }}>Действия</th>}
           </tr>
         </thead>
@@ -120,13 +129,28 @@ export const LangCalculationDetailPage = () => {
                   </Link>
               </td>
               <td>{item.language?.family}</td>
+              
+              {/* --- КОЛОНКА РОЛИ / ВЫБОРА БАЗОВОГО --- */}
               <td>
-                  {item.isBase ? (
-                      <Badge bg="info" text="dark">Базовый язык</Badge>
+                  {isDraft ? (
+                      <Form.Check 
+                        type="radio"
+                        name="baseLanguageSelect"
+                        id={`radio-${item.language?.id}`}
+                        label={item.isBase ? "Базовый" : "Выбрать"}
+                        checked={item.isBase}
+                        onChange={() => handleSetBase(item.language?.id!)}
+                        style={{ cursor: 'pointer' }}
+                      />
                   ) : (
-                      <span className="text-muted">Сравниваемый</span>
+                      item.isBase ? (
+                          <Badge bg="info" text="dark">Базовый язык</Badge>
+                      ) : (
+                          <span className="text-muted">Сравниваемый</span>
+                      )
                   )}
               </td>
+
               {isDraft && (
                 <td>
                   <Button 
