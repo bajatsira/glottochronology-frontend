@@ -43,8 +43,11 @@ export default defineConfig({
       '/api': {
         //target: 'http://localhost:8082',
         //target: 'http://192.168.3.39:8082',
-        target: 'http://10.111.255.45:8082',
+        target: 'http://127.0.0.1:8082', 
         changeOrigin: true,
+        //secure: false,
+        //rewrite: (path) => path.replace(/^\/api/, ''), // Убираем /api, если бэкенд его не ждет (в Go у вас роуты /api/..., так что rewrite может быть не нужен, проверьте роутер Gin)
+
       },
     },
   },

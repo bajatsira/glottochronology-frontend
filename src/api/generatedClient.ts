@@ -1,16 +1,23 @@
 // src/api/generatedClient.ts
 import { Api } from './generated-api';
 
-// Создаем единый экземпляр нашего сгенерированного API-клиента.
-// Мы будем использовать его во всех Thunk-ах, связанных с заявками.
+// Используется для Tauri (prod) и собранного PWA.
+const ZEROTIER_IP = "10.111.255.45"; 
+const PORT = "8082";
+
+// ЛОГИКА:
+// Dev (браузер): '' -> запрос идет как /api/..., прокси перехватывает.
+// Prod (Tauri): http://IP:PORT -> запрос идет напрямую на бэкенд.
+const BASE_URL = import.meta.env.DEV 
+  ? '' 
+  : `http://${ZEROTIER_IP}:${PORT}`;
+
+console.log("[GeneratedClient] Current Backend URL:", BASE_URL || "Proxy (relative)");
+
 export const generatedApi = new Api({
-  // Указываем базовый URL, чтобы не писать его в каждом запросе.
-  // Прокси Vite сам перенаправит запросы с /api на ваш бэкенд.
-  baseURL: '/api',
+  baseURL: BASE_URL,
 });
 
-// Этот перехватчик (interceptor) будет автоматически добавлять
-// токен авторизации в КАЖДЫЙ запрос, сделанный через 'generatedApi'.
 generatedApi.instance.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token && config.headers) {

@@ -26,9 +26,9 @@ export const NavbarComponent = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/" style={{ color: '#000' }}>Главная</Nav.Link>
-            <Nav.Link as={Link} to="/languages" style={{ color: '#000' }}>Рубрики (Услуги)</Nav.Link>
+            <Nav.Link as={Link} to="/languages" style={{ color: '#000' }}>Языки</Nav.Link>
             {user && (
-              <Nav.Link as={Link} to="/requests" style={{ color: '#000' }}>Мои Заявки</Nav.Link>
+              <Nav.Link as={Link} to="/LangCalculation" style={{ color: '#000' }}>Расчеты Сводеша</Nav.Link>
             )}
           </Nav>
           <Nav>
