@@ -1,13 +1,17 @@
 import { useState, useEffect, type FormEvent } from 'react';
-import { Row, Col, Form, Button, Spinner, Alert } from 'react-bootstrap';
-import { LanguageCard } from '../components/LanguageCard';
 import { useSelector, useDispatch } from 'react-redux';
+import { Loader2, Plus, Filter } from 'lucide-react';
+
+import { LanguageCard } from '../components/LanguageCard';
 import type { RootState, AppDispatch } from '../store/store';
 import { setLanguageFilters, fetchLanguages } from '../store/languagesSlice';
 import { addLangToDraft } from '../store/langCalculationsSlice';
 
+import styles from './LanguagesListPage.module.css';
+
 export const LanguagesListPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  
   const { items: languages, status, error, filters } = useSelector((state: RootState) => state.languages);
   const { user } = useSelector((state: RootState) => state.auth);
 
@@ -29,91 +33,116 @@ export const LanguagesListPage = () => {
   };
 
   const handleAddToDraft = (langId: number) => {
+    // TODO: Здесь стоит добавить уведомление (toast) об успехе
     dispatch(addLangToDraft({ draftId: 0, langId }));
   };
 
+  // Состояние загрузки
   if (status === 'loading' && languages.length === 0) {
-    return <div className="text-center p-5"><Spinner animation="border" /></div>;
+    return (
+      <div className={styles.loadingContainer}>
+        <Loader2 className="animate-spin text-accent" size={48} />
+      </div>
+    );
   }
 
+  // Состояние ошибки
   if (status === 'failed') {
-      return <Alert variant="danger">Ошибка: {error}</Alert>;
+    return (
+      <div className={styles.container}>
+        <div className={`${styles.alert} ${styles.error}`}>
+          Ошибка загрузки данных: {error}
+        </div>
+      </div>
+    );
   }
 
   return (
-    <>
-      <div className="mb-4 p-3 border rounded bg-light">
-        <h5>Поиск языков</h5>
-        <Form onSubmit={handleFilterSubmit}>
-          <Row>
-            <Col xs={12} md={3}>
-              <Form.Group className="mb-3">
-                <Form.Label>Название</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Например, Лезгинский"
-                  value={localName}
-                  onChange={(e) => setLocalName(e.target.value)}
-                />
-              </Form.Group>
-            </Col>
-            
-            <Col xs={12} md={3}>
-              <Form.Group className="mb-3">
-                <Form.Label>Семья</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Например, Нахско-дагестанская"
-                  value={localFamily}
-                  onChange={(e) => setLocalFamily(e.target.value)}
-                />
-              </Form.Group>
-            </Col>
-            <Col xs={12} md={3}>
-              <Form.Group className="mb-3">
-                <Form.Label>Письменность</Form.Label>
-                <Form.Select 
-                  value={localWriting}
-                  onChange={(e) => setLocalWriting(e.target.value)}
-                >
-                  <option value="">Любая</option>
-                  <option value="Кириллица">Кириллица</option>
-                  <option value="Латиница">Латиница</option>
-                  <option value="Арабская">Арабская</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col xs={12} md={3} className="d-flex align-items-center mb-3">
-              <Button variant="primary" type="submit" className="w-100 mt-4">
-                Применить
-              </Button>
-            </Col>
-          </Row>
-        </Form>
-      </div>
+    <main className={styles.container}>
+      <h1 className={styles.pageTitle}>Каталог Языков</h1>
 
+      {/* --- Фильтры --- */}
+      <section className={styles.filtersSection}>
+        <div className={styles.filtersTitle}>
+          <Filter size={16} />
+          Параметры поиска
+        </div>
+        
+        <form onSubmit={handleFilterSubmit} className={styles.filtersGrid}>
+          {/* Поле Название */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Название</label>
+            <input
+              type="text"
+              className={styles.input}
+              placeholder="Например, Лезгинский"
+              value={localName}
+              onChange={(e) => setLocalName(e.target.value)}
+            />
+          </div>
+
+          {/* Поле Семья */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Языковая семья</label>
+            <input
+              type="text"
+              className={styles.input}
+              placeholder="Например, Индоевропейская"
+              value={localFamily}
+              onChange={(e) => setLocalFamily(e.target.value)}
+            />
+          </div>
+
+          {/* Селект Письменность */}
+          <div className={styles.formGroup}>
+            <label className={styles.label}>Письменность</label>
+            <select
+              className={styles.select}
+              value={localWriting}
+              onChange={(e) => setLocalWriting(e.target.value)}
+            >
+              <option value="">Все системы</option>
+              <option value="Кириллица">Кириллица</option>
+              <option value="Латиница">Латиница</option>
+              <option value="Арабская">Арабская</option>
+            </select>
+          </div>
+
+          {/* Кнопка Поиска */}
+          <button type="submit" className={styles.searchButton}>
+            <span className="flex items-center gap-2">
+               Найти
+            </span>
+          </button>
+        </form>
+      </section>
+
+      {/* --- Результаты --- */}
       {languages.length === 0 && status === 'succeeded' && (
-          <Alert variant="info">Языки не найдены. Попробуйте изменить фильтры.</Alert>
+        <div className={styles.alert}>
+          По вашему запросу языки не найдены. Попробуйте изменить фильтры.
+        </div>
       )}
 
-      <Row xs={1} md={2} lg={3} className="g-4">
-        {languages.map(lang => (
-          // ИЗМЕНЕНИЕ №1
-          <Col key={lang.id}> 
+      <div className={styles.cardsGrid}>
+        {languages.map((lang) => (
+          <div key={lang.id} className={styles.cardWrapper}>
+            {/* Карточка языка рендерится как есть */}
             <LanguageCard language={lang} />
+            
+            {/* Кнопка добавления (рендерится только если есть юзер) */}
             {user && (
-              <Button 
-                  variant="success" 
-                  className="mt-2 w-100"
-                  // ИЗМЕНЕНИЕ №2
-                  onClick={() => handleAddToDraft(lang.id)} 
+              <button 
+                className={styles.addButton}
+                onClick={() => handleAddToDraft(lang.id)}
               >
-                  Добавить в заявку
-              </Button>
+                <Plus size={14} />
+                Добавить в расчет
+              </button>
             )}
-          </Col>
+          </div>
         ))}
-      </Row>
-    </>
+      </div>
+    </main>
   );
 };

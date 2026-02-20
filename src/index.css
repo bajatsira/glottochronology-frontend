@@ -1,4 +1,152 @@
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
+/* 2. Определение корневых переменных (Дизайн-система) */
+:root {
+  /* Базовые цвета (HSL) */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 10%;
+  
+  --card: 0 0% 97.6%;
+  --card-foreground: 0 0% 10%;
+  
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
+  
+  --primary: 0 0% 10%;
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 0 0% 97.6%;
+  --secondary-foreground: 0 0% 10%;
+  
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
+  
+  --accent: 14 87% 60%;
+  --accent-foreground: 0 0% 100%;
+  
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 100%;
+  
+  --border: 0 0% 89.8%;
+  --input: 0 0% 89.8%;
+  --ring: 0 0% 10%;
+  
+  --radius: 0.5rem;
+
+  /* --- ИНТЕГРАЦИЯ С BOOTSTRAP (Светлая тема) --- */
+  /* Переопределяем цвета Bootstrap, чтобы они использовали наши переменные */
+  
+  --bs-body-font-family: 'Inter', sans-serif;
+  --bs-body-bg: hsl(var(--background));
+  --bs-body-color: hsl(var(--foreground));
+  
+  /* Primary Button (Черная кнопка) */
+  --bs-primary: hsl(var(--primary));
+  --bs-primary-rgb: 0, 0, 0; /* Нужно для прозрачности */
+  --bs-btn-primary-color: hsl(var(--primary-foreground));
+  --bs-btn-primary-bg: hsl(var(--primary));
+  --bs-btn-primary-border-color: hsl(var(--primary));
+  
+  /* Secondary Button (Светло-серая кнопка) */
+  --bs-secondary: hsl(var(--secondary));
+  --bs-secondary-rgb: 240, 240, 240;
+  --bs-btn-secondary-color: hsl(var(--secondary-foreground));
+  --bs-btn-secondary-bg: hsl(var(--secondary));
+  --bs-btn-secondary-border-color: hsl(var(--border));
+
+  /* Ссылки (Акцентный оранжевый цвет) */
+  --bs-link-color: hsl(var(--accent));
+  --bs-link-hover-color: hsl(var(--accent)); /* Можно сделать темнее при наведении */
+  
+  /* Границы и инпуты */
+  --bs-border-color: hsl(var(--border));
+}
+
+/* 3. Темная тема */
+.dark {
+  --background: 0 0% 5%;
+  --foreground: 0 0% 95%;
+  
+  --card: 0 0% 8%;
+  --card-foreground: 0 0% 95%;
+  
+  --popover: 0 0% 5%;
+  --popover-foreground: 0 0% 95%;
+  
+  --primary: 0 0% 95%;
+  --primary-foreground: 0 0% 5%;
+  
+  --secondary: 0 0% 15%;
+  --secondary-foreground: 0 0% 95%;
+  
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 60%;
+  
+  --accent: 14 87% 60%;
+  --accent-foreground: 0 0% 100%;
+  
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 95%;
+  
+  --border: 0 0% 18%;
+  --input: 0 0% 18%;
+  --ring: 0 0% 83.9%;
+
+  /* --- ИНТЕГРАЦИЯ С BOOTSTRAP (Темная тема) --- */
+  --bs-body-bg: hsl(var(--background));
+  --bs-body-color: hsl(var(--foreground));
+  
+  --bs-primary: hsl(var(--primary));
+  --bs-primary-rgb: 255, 255, 255;
+  --bs-btn-primary-color: hsl(var(--primary-foreground));
+  --bs-btn-primary-bg: hsl(var(--primary));
+  --bs-btn-primary-border-color: hsl(var(--primary));
+  
+  --bs-secondary: hsl(var(--secondary));
+  --bs-btn-secondary-color: hsl(var(--secondary-foreground));
+  --bs-btn-secondary-bg: hsl(var(--secondary));
+  
+  --bs-border-color: hsl(var(--border));
+}
+
+/* 4. Глобальные сбросы и базовые стили */
+body {
+  margin: 0;
+  font-family: var(--bs-body-font-family);
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Улучшаем типографику заголовков */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: inherit;
+}
+
+/* Утилитарные классы для замены Tailwind (если понадобятся) */
+
+/* Кастомная карточка, похожая на дизайн */
+.custom-card {
+  background-color: hsl(var(--card));
+  color: hsl(var(--card-foreground));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+/* Кастомный navbar */
+.custom-navbar {
+  background-color: hsl(var(--background));
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+
+/*
 body {
   margin: 0;
   padding: 0;
@@ -19,3 +167,4 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+*/

@@ -1,82 +1,91 @@
-// src/pages/HomePage.tsx
-import { Link } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
-import styles from './HomePage.module.css';
+import { Link } from "react-router-dom";
+import { ArrowRight, Globe, Clock, Database } from "lucide-react";
+import styles from "./HomePage.module.css";
 
-export const HomePage = () => {
+export const HomePage = () => { 
   return (
-    <div className={styles.pageContainer}>
-      <Container fluid className="mt-4 mb-5">
-        
-        {/* Заголовок секции */}
-        <h1 className={styles.sectionHeader}>
-          О проекте
-          <br />
-          <span style={{ fontSize: '1rem', fontWeight: 400, color: '#666', marginLeft: '0' }}>
-            React SPA
-          </span>
-        </h1>
-
-        {/* СЕТКА СТАТИЧНЫХ СТАТЕЙ */}
-        <div className={styles.gridContainer}>
+    <main className={styles.main}>
+      
+      {/* Hero Section */}
+      <section className={`${styles.sectionContainer} ${styles.heroSection}`}>
+        <div className={styles.heroGrid}>
           
-          {/* Статья 1 (Большая ссылка на список языков) */}
-          <Link to="/languages" className={styles.articleCard}>
-            <img 
-              src="https://staticn1.nplus1.ru/images/2023/05/23/065337ec7e9308be767b07559e54d7f0.jpg" 
-              alt="Языки мира" 
-              className={styles.cardImage}
-            />
-            <div className={styles.cardOverlay}>
-              <span className={styles.cardRubric}>База данных</span>
-              <h3 className={styles.cardTitle}>
-                Каталог языков и диалектов
-              </h3>
-              <div className={styles.cardDescription} style={{ color: '#fff' }}>
-                Перейти к полному списку, настроить фильтры и изучить детали.
-              </div>
-            </div>
-          </Link>
-
-          {/* Статья 2 (О методе) */}
-          <div className={styles.articleCard}>
-            <img 
-              src="https://staticn1.nplus1.ru/images/2021/04/25/472537d6e66275252a65d6e27df7c62d.jpg" 
-              alt="Метод" 
-              className={styles.cardImage}
-            />
-            <div className={styles.cardOverlay}>
-              <span className={styles.cardRubric}>Методология</span>
-              <h3 className={styles.cardTitle}>
-                Глоттохронология: как считать время?
-              </h3>
-              <div className={styles.cardDescription} style={{ color: '#fff' }}>
-                Мы используем списки Сводеша для оценки степени родства между языками
-                на основе лексических совпадений.
-              </div>
+          {/* Левая колонка */}
+          <div>
+            <span className={styles.label}>
+              Project Lab 1.0
+            </span>
+            <h1 className={styles.title}>
+              TIME <br />
+              IS <br />
+              LANGUAGE
+            </h1>
+            
+            <div className={styles.versionLine}>
+              <span className={styles.separator}></span>
+              <span className={styles.versionText}>v.2026.02</span>
             </div>
           </div>
 
-          {/* Статья 3 (Технологии) */}
-          <div className={styles.articleCard}>
-            <img 
-              src="https://staticn1.nplus1.ru/images/2019/11/08/9de535dfd95b4cfdd264257be4f767a4.jpg" 
-              alt="Технологии" 
-              className={styles.cardImage}
-            />
-            <div className={styles.cardOverlay}>
-              <span className={styles.cardRubric}>Разработка</span>
-              <h3 className={styles.cardTitle}>
-                Стек технологий: Golang + React
-              </h3>
-              <div className={styles.cardDescription} style={{ color: '#fff' }}>
-                Быстрый бэкенд на Gin, объектное хранилище Minio и современный фронтенд на Vite.
-              </div>
+          {/* Правая колонка */}
+          <div className={styles.contentColumn}>
+            <p className={styles.description}>
+              <span className={styles.highlight}>Глоттохронология</span> — метод 
+              датировки разделения языков. Мы используем списки Сводеша, 
+              чтобы рассчитать приблизительное время расхождения родственных 
+              языков на основе процента сохранившихся когнатов в базовой лексике.
+            </p>
+
+            <div className={styles.actions}>
+              <Link to="/languages" className={styles.btnPrimary}>
+                Исследуйте дивергенцию языков
+                <ArrowRight size={16} />
+              </Link>
+              
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className={`${styles.sectionContainer} ${styles.featuresSection}`}>
+        <div className={styles.featuresGrid}>
+          
+          <div className={styles.featureCard}>
+            <Globe className={styles.featureIcon} size={32} strokeWidth={1.5} />
+            <h3 className={styles.featureTitle}>База знаний</h3>
+            <p className={styles.featureText}>
+              Структурированная коллекция языков, классифицированная по семьям 
+              и группам. Для каждого языка доступны детальные 100-словные 
+              списки Сводеша.
+            </p>
+          </div>
+
+          <div className={styles.featureCard}>
+            <Clock className={styles.featureIcon} size={32} strokeWidth={1.5} />
+            <h3 className={styles.featureTitle}>Расчет дивергенции</h3>
+            <p className={styles.featureText}>
+              Выберите базовый язык и сравните его с другими, чтобы оценить 
+              историческую дату их разделения, используя формулы 
+              лексикостатистики.
+
+            </p>
+          </div>
+
+          <div className={styles.featureCard}>
+            <Database className={styles.featureIcon} size={32} strokeWidth={1.5} />
+            <h3 className={styles.featureTitle}>Верификация</h3>
+            <p className={styles.featureText}>
+              Каждая заявка на расчет 
+              проходит обязательную модерацию и утверждение 
+              лингвистом перед публикацией результатов.
+            </p>
           </div>
 
         </div>
-      </Container>
-    </div>
+      </section>
+
+    </main>
   );
 };
+

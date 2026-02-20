@@ -1,0 +1,121 @@
+/* Контейнер страницы: центрирование по вертикали и горизонтали */
+.container {
+  min-height: calc(100vh - 3.5rem); /* Вычет высоты хедера */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: hsl(var(--background));
+  padding: 1rem;
+}
+
+/* Карточка формы: Острая, с рамкой */
+.formCard {
+  width: 100%;
+  max-width: 400px;
+  background-color: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  padding: 2.5rem;
+}
+
+/* Заголовок: N+1 стиль */
+.title {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: hsl(var(--foreground));
+}
+
+/* Группы полей */
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: hsl(var(--foreground));
+}
+
+/* Инпуты: Острые, с нижней границей или полной рамкой */
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: inherit;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
+  border: 1px solid hsl(var(--input));
+  border-radius: 0; /* Острые углы */
+  transition: border-color 0.2s, outline 0.2s;
+}
+
+.input:focus {
+  outline: 2px solid hsl(var(--accent)); /* Оранжевый фокус */
+  border-color: hsl(var(--accent));
+}
+
+/* Кнопка: Черная, острая, жирная */
+.submitButton {
+  width: 100%;
+  padding: 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(var(--background));
+  background-color: hsl(var(--foreground));
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  margin-top: 1rem;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: hsl(var(--accent)); /* Оранжевый при наведении */
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Сообщения об ошибках и успехе */
+.errorAlert {
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  background-color: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.successMessage {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.successTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  color: hsl(var(--foreground));
+}
+
+.loginLink {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: hsl(var(--accent));
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  transition: opacity 0.2s;
+}
+
+.loginLink:hover {
+  opacity: 0.8;
+}
