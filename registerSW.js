@@ -1,1 +1,0 @@
-if('serviceWorker' in navigator) {window.addEventListener('load', () => {navigator.serviceWorker.register('/glottochronology-frontend/sw.js', { scope: '/glottochronology-frontend/' })})}
