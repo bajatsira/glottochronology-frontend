@@ -1,0 +1,175 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+  background-color: hsl(var(--background));
+  min-height: 100vh;
+}
+
+.pageTitle {
+  font-size: 3rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: hsl(var(--foreground));
+  margin-bottom: 2rem;
+  border-bottom: 2px solid hsl(var(--foreground));
+  padding-bottom: 1rem;
+}
+
+/* --- Блок Фильтров --- */
+.filtersSection {
+  background-color: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  align-items: end;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterLabel {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.filterInput, .filterSelect {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+  border-radius: 0;
+  color: hsl(var(--foreground));
+}
+
+.filterInput:focus, .filterSelect:focus {
+  outline: none;
+  border-color: hsl(var(--accent));
+}
+
+/* --- Таблица --- */
+.tableContainer {
+  overflow-x: auto;
+  border: 1px solid hsl(var(--border));
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  background-color: hsl(var(--background));
+}
+
+.th {
+  padding: 1rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  background-color: hsl(var(--muted));
+  border-bottom: 2px solid hsl(var(--foreground));
+  white-space: nowrap;
+}
+
+.td {
+  padding: 1.5rem 1rem;
+  border-bottom: 1px solid hsl(var(--border));
+  vertical-align: middle;
+}
+
+.tr:hover .td {
+  background-color: hsl(var(--muted) / 0.5);
+}
+
+/* Содержимое ячеек */
+.calcId {
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: hsl(var(--foreground));
+  text-decoration: none;
+}
+.calcId:hover {
+  text-decoration: underline;
+  color: hsl(var(--accent));
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+}
+.statusBadge.draft { color: hsl(var(--muted-foreground)); }
+.statusBadge.formed { color: hsl(var(--accent)); border-color: hsl(var(--accent)); }
+.statusBadge.completed { color: hsl(var(--foreground)); background-color: hsl(var(--foreground)); color: hsl(var(--background)); }
+.statusBadge.rejected { color: hsl(var(--destructive)); border-color: hsl(var(--destructive)); }
+
+.metaInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.resultValue {
+  font-weight: 800;
+  font-size: 1rem;
+  color: hsl(var(--foreground));
+}
+
+/* --- Кнопки действий Модератора --- */
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btnApprove {
+  background-color: hsl(var(--foreground));
+  color: hsl(var(--background));
+  border: 1px solid hsl(var(--foreground));
+}
+.btnApprove:hover {
+  background-color: hsl(var(--accent));
+  border-color: hsl(var(--accent));
+}
+
+.btnReject {
+  background-color: transparent;
+  color: hsl(var(--destructive));
+  border: 1px solid hsl(var(--destructive));
+}
+.btnReject:hover {
+  background-color: hsl(var(--destructive));
+  color: white;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 4rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+}

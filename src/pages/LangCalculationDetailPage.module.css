@@ -1,0 +1,299 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+  background-color: hsl(var(--background));
+  min-height: 100vh;
+}
+
+/* Навигация и Заголовок */
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: hsl(var(--muted-foreground));
+  text-decoration: none;
+  margin-bottom: 2rem;
+  transition: color 0.2s;
+}
+
+.backLink:hover {
+  color: hsl(var(--accent));
+}
+
+.header {
+  border-bottom: 2px solid hsl(var(--foreground));
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+  color: hsl(var(--foreground));
+}
+
+.statusBadge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  background-color: hsl(var(--foreground));
+  color: hsl(var(--background));
+}
+
+/* Поля заявки (Текст сверху) */
+.calculationInfo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  padding: 1.5rem;
+  background-color: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  margin-bottom: 3rem;
+}
+
+.infoBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.infoLabel {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  letter-spacing: 0.05em;
+}
+
+.infoValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.infoPlaceholder {
+  font-size: 1rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+}
+
+/* Услуги (Карточки в 1 столбец) */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.addBtn {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: hsl(var(--accent));
+  text-decoration: none;
+  border: 1px solid hsl(var(--accent));
+  padding: 0.5rem 1rem;
+  transition: all 0.2s;
+}
+
+.addBtn:hover {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--background));
+}
+
+.cardsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 3rem;
+}
+
+/* Карточка услуги */
+.serviceCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+  transition: border-color 0.2s;
+}
+
+.serviceCard:hover {
+  border-color: hsl(var(--foreground));
+}
+
+/* Выделение базового языка */
+.serviceCard.isBase {
+  border-color: hsl(var(--accent));
+  border-left: 4px solid hsl(var(--accent));
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.langName {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: hsl(var(--foreground));
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.langName:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.langFamily {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+}
+
+/* Правая часть карточки (М-М поле и удаление) */
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.mmField {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mmLabel {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: hsl(var(--foreground));
+}
+
+/* Стилизация радиокнопки (галочки) */
+.radioInput {
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid hsl(var(--foreground));
+  border-radius: 0;
+  cursor: pointer;
+  display: grid;
+  place-content: center;
+  background-color: transparent;
+}
+
+.radioInput::before {
+  content: "";
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: hsl(var(--accent));
+  transform: scale(0);
+  transition: 0.1s transform ease-in-out;
+}
+
+.radioInput:checked::before {
+  transform: scale(1);
+}
+
+.radioInput:disabled {
+  border-color: hsl(var(--muted-foreground));
+  cursor: not-allowed;
+}
+
+.radioInput:checked:disabled::before {
+  background-color: hsl(var(--muted-foreground));
+}
+
+.deleteBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.2s;
+  display: flex;
+  padding: 0.5rem;
+}
+
+.deleteBtn:hover {
+  color: hsl(var(--destructive));
+}
+
+/* Панель кнопок (Сформировать / Удалить заявку) */
+.footerActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  border-top: 2px solid hsl(var(--foreground));
+}
+
+.btn {
+  padding: 1rem 2rem;
+  font-size: 0.875rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnPrimary {
+  background-color: hsl(var(--foreground));
+  color: hsl(var(--background));
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--foreground));
+}
+
+.btnPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnDestructive {
+  background-color: transparent;
+  color: hsl(var(--destructive));
+  border-color: hsl(var(--destructive));
+}
+
+.btnDestructive:hover {
+  background-color: hsl(var(--destructive));
+  color: white;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+  border: 1px dashed hsl(var(--border));
+  color: hsl(var(--muted-foreground));
+  font-weight: 500;
+}

@@ -94,6 +94,8 @@ export const deleteCalculation = createAsyncThunk<void, number>(
     }
 );
 
+
+
 // 7. Установить базовый язык (Использует Axios + getBaseUrl)
 export const setBaseLanguage = createAsyncThunk(
   'langCalculations/setBaseLanguage',
@@ -122,6 +124,32 @@ export const setBaseLanguage = createAsyncThunk(
     }
   }
 );
+
+// Обработка заявки модератором (Завершить / Отклонить)
+export const processCalculationByModerator = createAsyncThunk<
+  void, 
+  { id: number; action: 'завершить' | 'отклонить' }
+>(
+  'langCalculations/processByModerator',
+  async ({ id, action }, { rejectWithValue, dispatch }) => {
+      try {
+          const baseURL = getBaseUrl();
+          const url = `${baseURL}/lang-calculation/${id}/complete`;
+          
+          await axios.put(
+            url,
+            { action }, // Отправляем тело { action: 'завершить' } или { action: 'отклонить' }
+            { headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` } }
+          );
+          
+          // После успешного выполнения обновляем список заявок
+          dispatch(fetchLangCalculations()); 
+      } catch (err: any) {
+          return rejectWithValue(err.response?.data || err.message);
+      }
+  }
+);
+
 
 interface LangCalculationsState {
   items: DsLangCalculation[];

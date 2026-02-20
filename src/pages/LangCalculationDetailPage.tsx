@@ -1,15 +1,19 @@
 import { useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Container, Table, Button, Spinner, Alert, Badge, Card, Row, Col, Form } from 'react-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
+import { ArrowLeft, Trash2, Loader2, AlertTriangle } from 'lucide-react';
+
 import { 
   fetchLangCalculationById, 
   removeLangFromDraft, 
   confirmCalculation, 
   clearCurrentDetail,
-  setBaseLanguage 
+  setBaseLanguage,
+  deleteCalculation 
 } from '../store/langCalculationsSlice';
+
 import type { RootState, AppDispatch } from '../store/store';
+import styles from './LangCalculationDetailPage.module.css';
 
 export const LangCalculationDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,19 +26,14 @@ export const LangCalculationDetailPage = () => {
     if (id) {
       dispatch(fetchLangCalculationById(Number(id)));
     }
-    // Очистка при размонтировании компонента
     return () => {
         dispatch(clearCurrentDetail());
     };
   }, [id, dispatch]);
 
   const handleRemoveLang = (langId: number) => {
-    if (currentDetail?.id) {
-        if (confirm('Удалить этот язык из расчета?')) {
-            // Обратите внимание: проверьте, ожидает ли ваш thunk 'draftId' или 'calculationId'.
-            // В вашем коде было draftId, оставляю как есть.
-            dispatch(removeLangFromDraft({ draftId: currentDetail.id, langId }));
-        }
+    if (currentDetail?.id && confirm('Убрать язык из расчета?')) {
+        dispatch(removeLangFromDraft({ draftId: currentDetail.id, langId }));
     }
   };
 
@@ -45,136 +44,170 @@ export const LangCalculationDetailPage = () => {
   };
 
   const handleConfirm = async () => {
-    if (currentDetail?.id) {
-       if (confirm('Вы уверены, что хотите отправить заявку на расчет? Редактирование станет недоступным.')) {
-           await dispatch(confirmCalculation(currentDetail.id));
-           navigate('/LangCalculation'); // Возврат к списку
-       }
+    if (currentDetail?.id && confirm('Завершить заявку? Редактирование станет недоступным.')) {
+        await dispatch(confirmCalculation(currentDetail.id));
+        navigate('/LangCalculation'); 
+    }
+  };
+
+  const handleDeleteDraft = async () => {
+    if (currentDetail?.id && confirm('Удалить эту заявку безвозвратно?')) {
+        await dispatch(deleteCalculation(currentDetail.id));
+        navigate('/LangCalculation'); 
     }
   };
 
   if (status === 'loading') {
-      return <Container className="mt-5 text-center"><Spinner animation="border" /></Container>;
+      return (
+        <div className="flex justify-center items-center min-h-screen text-foreground">
+          <Loader2 className="animate-spin mr-2" /> Загрузка данных...
+        </div>
+      );
   }
-  
+
   if (error) {
-      return <Container className="mt-5"><Alert variant="danger">{typeof error === 'object' ? JSON.stringify(error) : error}</Alert></Container>;
+      return (
+        <div className="p-10 text-center text-destructive">
+          <AlertTriangle className="mx-auto mb-2" />
+          {typeof error === 'object' ? JSON.stringify(error) : error}
+        </div>
+      );
   }
-  
+
   if (!currentDetail) {
-      return <Container className="mt-5"><Alert variant="warning">Заявка не найдена</Alert></Container>;
+      return <div className="p-10 text-center text-muted-foreground">Заявка не найдена</div>;
   }
 
   const isDraft = currentDetail.status === 'черновик';
-  const isCompleted = currentDetail.status === 'завершён';
+  
+  // Проверка для блокировки кнопки формирования
+  const hasBaseLang = currentDetail.languages?.some(l => l.isBase);
 
   return (
-    <Container className="mt-4">
-      {/* Хедер с навигацией назад */}
-      <div className="mb-3">
-          <Link to="/LangCalculation" className="text-decoration-none">&larr; Вернуться к списку</Link>
-      </div>
+    <main className={styles.container}>
+      
+      <Link to="/LangCalculation" className={styles.backLink}>
+        <ArrowLeft size={16} /> К списку расчетов
+      </Link>
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2>
-            Расчет #{currentDetail.id} <Badge bg={isDraft ? "secondary" : isCompleted ? "success" : "primary"}>{currentDetail.status}</Badge>
-        </h2>
-        {isDraft && (
-            <Button 
-                variant="success" 
-                onClick={handleConfirm} 
-                disabled={!currentDetail.languages || currentDetail.languages.length < 2}
-                title={(!currentDetail.languages || currentDetail.languages.length < 2) ? "Для расчета нужно минимум 2 языка" : ""}
-            >
-                Сформировать заявку
-            </Button>
-        )}
-      </div>
+      <header className={styles.header}>
+        <div className={styles.titleWrapper}>
+          <h1 className={styles.title}>Заявка #{currentDetail.id}</h1>
+          <span className={styles.statusBadge}>{currentDetail.status}</span>
+        </div>
+      </header>
 
-      {/* Блок результатов (только для завершенных) */}
-      {isCompleted && (
-          <Card className="mb-4 border-success">
-              <Card.Header className="bg-success text-white">Результаты Глоттохронологии</Card.Header>
-              <Card.Body>
-                  <Row className="text-center">
-                      <Col>
-                          <h4>{currentDetail.similarityRate ? (currentDetail.similarityRate * 100).toFixed(2) : 0}%</h4>
-                          <span className="text-muted">Коэффициент схожести</span>
-                      </Col>
-                      <Col>
-                          <h4>{currentDetail.resultYearsAgo} лет</h4>
-                          <span className="text-muted">Время расхождения</span>
-                      </Col>
-                  </Row>
-              </Card.Body>
-          </Card>
+      {/* Поля заявки (Текст сверху) */}
+      <section className={styles.calculationInfo}>
+        <div className={styles.infoBlock}>
+          <span className={styles.infoLabel}>Коэффициент дивергенции</span>
+          {currentDetail.similarityRate !== null && currentDetail.similarityRate !== undefined ? (
+            <span className={styles.infoValue}>{(currentDetail.similarityRate * 100).toFixed(1)}%</span>
+          ) : (
+            <span className={styles.infoPlaceholder}>Расчет не проведен</span>
+          )}
+        </div>
+
+        <div className={styles.infoBlock}>
+          <span className={styles.infoLabel}>Время расхождения</span>
+          {currentDetail.resultYearsAgo ? (
+            <span className={styles.infoValue}>{currentDetail.resultYearsAgo} лет назад</span>
+          ) : (
+            <span className={styles.infoPlaceholder}>Расчет не проведен</span>
+          )}
+        </div>
+      </section>
+
+      {/* Услуги (Карточки в 1 столбец) */}
+      <section>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>Состав выборки</h2>
+          {isDraft && (
+            <Link to="/languages" className={styles.addBtn}>
+              + Добавить язык
+            </Link>
+          )}
+        </div>
+
+        <div className={styles.cardsList}>
+          {currentDetail.languages?.map(item => {
+            const langId = item.language?.id!;
+            return (
+              <div 
+                key={item.id} 
+                className={`${styles.serviceCard} ${item.isBase ? styles.isBase : ''}`}
+              >
+                {/* Левая часть: Инфо об услуге */}
+                <div className={styles.cardContent}>
+                  <Link to={`/languages/${langId}`} className={styles.langName}>
+                    {item.language?.name}
+                  </Link>
+                  <span className={styles.langFamily}>
+                    Семья: {item.language?.family}
+                  </span>
+                </div>
+
+                {/* Правая часть: Поле М-М (Галочка) и Удаление */}
+                <div className={styles.cardActions}>
+                  
+                  {/* Поле М-М: Выбор базового языка (Галочка справа) */}
+                  <div className={styles.mmField}>
+                    <span className={styles.mmLabel}>Базовый язык:</span>
+                    <input 
+                      type="radio"
+                      name="baseLang"
+                      checked={item.isBase}
+                      onChange={() => isDraft && handleSetBase(langId)}
+                      className={styles.radioInput}
+                      disabled={!isDraft}
+                      title={isDraft ? "Назначить этот язык точкой отсчета" : ""}
+                    />
+                  </div>
+
+                  {/* Кнопка удаления */}
+                  {isDraft && (
+                    <button 
+                      onClick={() => handleRemoveLang(langId)}
+                      className={styles.deleteBtn}
+                      title="Удалить из заявки"
+                    >
+                      <Trash2 size={20} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+
+          {(!currentDetail.languages || currentDetail.languages.length === 0) && (
+            <div className={styles.emptyState}>
+               Список пуст. Перейдите в каталог, чтобы добавить языки для сравнения.
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Кнопки действий (Только для черновика) */}
+      {isDraft && (
+        <footer className={styles.footerActions}>
+          <button 
+            onClick={handleDeleteDraft}
+            className={`${styles.btn} ${styles.btnDestructive}`}
+          >
+            Удалить заявку
+          </button>
+
+          <button 
+            onClick={handleConfirm}
+            className={`${styles.btn} ${styles.btnPrimary}`}
+            disabled={!currentDetail.languages || currentDetail.languages.length < 2 || !hasBaseLang}
+            title={!hasBaseLang ? "Необходимо выбрать базовый язык" : ""}
+          >
+            Отправить заявку
+          </button>
+        </footer>
       )}
 
-      <h4>Выбранные языки</h4>
-      <Table bordered hover className="align-middle">
-        <thead className="table-light">
-          <tr>
-            <th>Название</th>
-            <th>Семья</th>
-            <th>Роль (Базовый)</th>
-            {isDraft && <th style={{ width: '150px' }}>Действия</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {currentDetail.languages?.map(item => (
-            <tr key={item.id}> 
-              <td>
-                  <Link to={`/languages/${item.language?.id}`} className="fw-bold text-decoration-none">
-                      {item.language?.name}
-                  </Link>
-              </td>
-              <td>{item.language?.family}</td>
-              
-              {/* --- КОЛОНКА РОЛИ / ВЫБОРА БАЗОВОГО --- */}
-              <td>
-                  {isDraft ? (
-                      <Form.Check 
-                        type="radio"
-                        name="baseLanguageSelect"
-                        id={`radio-${item.language?.id}`}
-                        label={item.isBase ? "Базовый" : "Выбрать"}
-                        checked={item.isBase}
-                        onChange={() => handleSetBase(item.language?.id!)}
-                        style={{ cursor: 'pointer' }}
-                      />
-                  ) : (
-                      item.isBase ? (
-                          <Badge bg="info" text="dark">Базовый язык</Badge>
-                      ) : (
-                          <span className="text-muted">Сравниваемый</span>
-                      )
-                  )}
-              </td>
-
-              {isDraft && (
-                <td>
-                  <Button 
-                    variant="outline-danger" 
-                    size="sm" 
-                    className="w-100"
-                    onClick={() => handleRemoveLang(item.language?.id!)} 
-                  >
-                    &times; Удалить
-                  </Button>
-                </td>
-              )}
-            </tr>
-          ))}
-          
-          {(!currentDetail.languages || currentDetail.languages.length === 0) && (
-              <tr>
-                  <td colSpan={isDraft ? 4 : 3} className="text-center py-4 text-muted">
-                      Список языков пуст. <Link to="/languages">Перейдите в каталог</Link>, чтобы добавить языки.
-                  </td>
-              </tr>
-          )}
-        </tbody>
-      </Table>
-    </Container>
+    </main>
   );
 };

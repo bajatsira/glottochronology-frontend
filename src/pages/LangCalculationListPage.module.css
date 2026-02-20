@@ -1,0 +1,157 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+  background-color: hsl(var(--background));
+  min-height: 100vh;
+}
+
+.pageTitle {
+  font-size: 3rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: hsl(var(--foreground));
+  margin-bottom: 2rem;
+  border-bottom: 2px solid hsl(var(--foreground));
+  padding-bottom: 1rem;
+  line-height: 1.1;
+}
+
+/* Состояния загрузки и ошибки */
+.loadingState, .errorState, .emptyState {
+  padding: 4rem;
+  text-align: center;
+  border: 1px solid hsl(var(--border));
+}
+
+.errorState {
+  color: hsl(var(--destructive));
+  border-color: hsl(var(--destructive));
+  font-weight: 700;
+}
+
+.emptyState {
+  color: hsl(var(--muted-foreground));
+  background-color: hsl(var(--muted));
+  font-weight: 500;
+}
+
+.link {
+  color: hsl(var(--foreground));
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.link:hover {
+  color: hsl(var(--accent));
+}
+
+/* Таблица */
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.th {
+  padding: 1rem 1.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  border-bottom: 2px solid hsl(var(--foreground));
+  white-space: nowrap;
+}
+
+.td {
+  padding: 1.5rem;
+  border-bottom: 1px solid hsl(var(--border));
+  vertical-align: middle;
+}
+
+.tr:hover .td {
+  background-color: hsl(var(--muted) / 0.5);
+}
+
+/* Содержимое ячеек */
+.calcId {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: hsl(var(--foreground));
+}
+
+.metaText {
+  font-size: 0.875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.statusBadge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background));
+}
+
+.statusBadge.draft { color: hsl(var(--muted-foreground)); }
+.statusBadge.formed { color: hsl(var(--accent)); border-color: hsl(var(--accent)); }
+.statusBadge.completed { color: hsl(var(--foreground)); background-color: hsl(var(--foreground)); color: hsl(var(--background)); }
+.statusBadge.rejected { color: hsl(var(--destructive)); border-color: hsl(var(--destructive)); }
+
+.baseLangText {
+  font-weight: 800;
+  color: hsl(var(--foreground));
+}
+
+/* Кнопки действий */
+.actionsCell {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.btnPrimary {
+  background-color: hsl(var(--foreground));
+  color: hsl(var(--background));
+  border: 1px solid hsl(var(--foreground));
+}
+
+.btnPrimary:hover {
+  background-color: hsl(var(--accent));
+  border-color: hsl(var(--accent));
+}
+
+.btnDestructive {
+  background-color: transparent;
+  color: hsl(var(--destructive));
+  border: 1px solid hsl(var(--border));
+}
+
+.btnDestructive:hover {
+  background-color: hsl(var(--destructive));
+  border-color: hsl(var(--destructive));
+  color: white;
+}
