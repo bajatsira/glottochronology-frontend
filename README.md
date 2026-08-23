@@ -1,73 +1,81 @@
-# React + TypeScript + Vite
+# Веб-сервис Глоттохронологии: Фронтенд
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Репозиторий содержит клиентскую часть (фронтенд) веб-сервиса для глоттохронологического анализа — расчета времени расхождения языков на основе лексико-статистических данных. 
 
-Currently, two official plugins are available:
+> **Примечание:** Данный проект является составной частью микросервисной архитектуры. Серверная часть (API) и асинхронный модуль математических расчетов вынесены в отдельные репозитории.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Функционал
 
-## React Compiler
+- **Каталог языков:** просмотр списка языков, их метаданных, списков Сводеша (лексикона) и медиафайлов.
+- **Управление заявками (Корзина/Черновик):** добавление языков в черновик для последующего расчета, выбор базового языка.
+- **Ролевая модель:** поддержка различных уровней доступа (Гость, Пользователь/Создатель, Лингвист, Модератор).
+- **Панель модератора:** управление статусами заявок и запуск расчетов.
+- **Кроссплатформенность (Web + Desktop):** проект может запускаться как обычное SPA в браузере, так и собираться в легковесное нативное десктоп-приложение с помощью Tauri.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠 Стек технологий
 
-## Expanding the ESLint configuration
+- **Ядро:** React 19, TypeScript, Vite
+- **Стейт-менеджмент:** Redux Toolkit (`authSlice`, `languagesSlice`, `langCalculationsSlice`)
+- **Роутинг:** React Router v7
+- **UI & Стилизация:** React Bootstrap, Bootstrap 5, Lucide React (иконки), CSS-модули
+- **Сетевое взаимодействие:** Axios
+- **API Client:** Автоматическая генерация типов и методов через `swagger-typescript-api`
+- **Desktop Wrapper:** Tauri (`@tauri-apps/api`, `@tauri-apps/plugin-http`)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🏗 Особенности архитектуры
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 1. Гибридная сеть (Tauri vs Browser)
+В проекте реализован кастомный адаптер для Axios (`src/api/axiosInstance.ts`), который динамически определяет среду выполнения:
+- **В браузере (Dev/Prod):** Запросы идут через стандартный `/api` (проксируется Vite в режиме разработки).
+- **В среде Tauri:** Запросы отправляются напрямую на бэкенд через встроенный плагин `@tauri-apps/plugin-http`, что позволяет обходить браузерные ограничения CORS.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 2. Кодогенерация API
+Работа с бэкендом типизирована. Классы и интерфейсы (`DsLang`, `DsLangCalculation` и др.) сгенерированы автоматически на основе OpenAPI/Swagger спецификации бэкенда (`src/api/generated-api.ts`).
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📁 Структура проекта
+
+```text
+src/
+├── api/             # API-клиенты, интерцепторы Axios и сгенерированный Swagger-код
+├── assets/          # Статические ресурсы (картинки, иконки)
+├── components/      # Переиспользуемые UI-компоненты (Navbar, Breadcrumbs, Cards)
+├── data/            # Моковые данные (для fallback-режима)
+├── pages/           # Страницы приложения (Home, Login, LanguageDetail, Dashboard и др.)
+├── store/           # Redux-хранилище и слайсы
+├── App.tsx          # Корневой компонент и лэйаут
+└── main.tsx         # Точка входа
+src-tauri/           # Конфигурация и Rust-код для десктопной сборки
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 💻 Установка и запуск
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Предварительные требования
+- Node.js (v18+)
+- npm / yarn / pnpm
+- Rust и Cargo (если планируется сборка через Tauri)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Запуск в режиме веб-разработки
+
+1. Установите зависимости:
+   ```bash
+   npm install
+   ```
+2. Запустите dev-сервер:
+   ```bash
+   npm run dev
+   ```
+
+### Сборка под Desktop (Tauri)
+
+Для запуска десктопной версии в режиме разработки:
+```bash
+npm run tauri dev
 ```
+
+Для компиляции финального исполняемого файла (exe/app/deb):
+```bash
+npm run tauri build
+```
+
+## 🔧 Конфигурация API
+IP-адрес и порт бэкенда для десктопной сборки задаются в `src/api/generatedClient.ts` и `src/api/axiosInstance.ts` (по умолчанию используется IP сети ZeroTier). Для веб-версии необходимо настроить `server.proxy` в файле `vite.config.ts`.
